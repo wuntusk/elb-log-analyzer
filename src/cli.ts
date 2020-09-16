@@ -1,4 +1,3 @@
-#! /usr/bin/env node
 import _ from 'lodash'
 import ProgressBar from 'progress'
 import fs from 'fs'

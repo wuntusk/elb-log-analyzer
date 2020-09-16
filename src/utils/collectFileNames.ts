@@ -6,7 +6,7 @@ const glob: Function = promisify(require('glob'))
 export const collectFileNames = async (files: string[]): Promise<string[]> =>
   Promise.all(
     files.map(async (fileName: string) => {
-      let fileList: string[] = await glob(fileName + '/**/*', { nodir: true })
+      let fileList: string[] = await glob(fileName + '/**/*.log', { nodir: true })
       if (!fileList || !fileList.length) {
         fileList = await glob(fileName, { nodir: true })
 

@@ -16,7 +16,15 @@ export function parseLine(line: string): ParsedLine | undefined {
 
   const requestField = String(ATTRIBUTES[11])
   const [method, requestedResource] = requestField.split(' ')
-  const parsedURL = new URL(requestedResource)
+  let parsedURL
+
+  try {
+    parsedURL = new URL(requestedResource)
+  } catch (e) {
+    // console.log(`${e.message}`)
+    // Malformed URL request probably a port scan or something.. should we be trying to flag these
+    parsedURL = {}
+  }
   const parsedURLWithCorrectKeys: { [key: string]: any } = {}
 
   ;([

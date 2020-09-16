@@ -5,6 +5,15 @@ import { parseAndProcessFiles } from './utils/parseAndProcessFiles'
 import { generateProcessor } from './utils/generateProcessor'
 import { LibraryOptions } from './types/library'
 
+export async function asyncForEach(
+  array: Array<any>,
+  callback: (item: any, index: number, array: Array<any>) => Promise<void>,
+): Promise<void> {
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array)
+  }
+}
+
 export default async function ({
   files = [],
   cols = ['count', 'requested_resource'],
@@ -45,7 +54,21 @@ export default async function ({
 
   const filterFunc = generateFilter(prefixes.slice(), cols)
 
-  await parseAndProcessFiles(fileNames, processor.process.bind(processor, filterFunc), onProgress)
+  // await parseAndProcessFiles(fileNames, processor.process.bind(processor, filterFunc), onProgress)
+
+  const fileGroups:Array<string[]> = []
+
+  while (fileNames.length > 2000) {
+    fileGroups.push(fileNames.splice(0, 2000))
+  }
+
+  if (fileNames.length > 0) {
+    fileGroups.push(fileNames)
+  }
+
+  await asyncForEach(fileGroups, async fileGroup => {
+    await parseAndProcessFiles(fileGroup, processor.process.bind(processor, filterFunc), onProgress)
+  })
 
   let logs = processor.getResults()
 

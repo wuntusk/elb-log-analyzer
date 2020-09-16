@@ -57,7 +57,12 @@ export function generateProcessor({
           return
         }
 
-        const parsedLineAsObject = parseLine(line)
+        let parsedLineAsObject
+        try {
+          parsedLineAsObject = parseLine(line)
+        } catch (e) {
+          return
+        }
 
         // console.log('parsedLineAsObject', line)
         if (!parsedLineAsObject) {
@@ -128,7 +133,7 @@ export function generateProcessor({
           return
         }
 
-        if (filterFunc && !filterFunc(lineObj)) {
+        if (filterFunc && !filterFunc(mappedLine)) {
           return
         }
 
